@@ -1,6 +1,8 @@
 package net.profhugo.nodami.mixin;
 
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -13,7 +15,13 @@ import net.profhugo.nodami.interfaces.EntityHurtCallback;
 import net.profhugo.nodami.interfaces.EntityKnockbackCallback;
 
 @Mixin(LivingEntity.class)
-public class LivingEntityMixin {
+public abstract class LivingEntityMixin {
+
+	@Shadow @Nullable public abstract LivingEntity getAttacking();
+
+	@Shadow @Nullable public abstract DamageSource getRecentDamageSource();
+
+	@Shadow @Nullable public abstract LivingEntity getAttacker();
 
 	@Inject(at = @At("TAIL"), method = "applyDamage", cancellable = true)
 	private void onEntityHurt(final DamageSource source, final float amount, CallbackInfo info) {
@@ -25,11 +33,11 @@ public class LivingEntityMixin {
 	}
 
 	@Inject(at = @At("HEAD"), method = "takeKnockback", cancellable = true)
-	private void onTakingKnockback(final Entity source, float amp, double dx, double dz, CallbackInfo info) {
+	private void onTakingKnockback(double strength, double x, double z, CallbackInfo ci) {
 		ActionResult result = EntityKnockbackCallback.EVENT.invoker().takeKnockback((LivingEntity) (Object) this,
-				source, amp, dx, dz);
+				this.getAttacker(), (float) strength, x, z);
 		if (result == ActionResult.FAIL) {
-			info.cancel();
+			ci.cancel();
 		}
 
 	}

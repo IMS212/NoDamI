@@ -43,7 +43,7 @@ public class NoDamI implements ModInitializer {
 				}
 				String message = String.format("Type of damage received: %s\nAmount: %.3f\nTrue Source (mob id): %s\n",
 						source.getName(), amount, debugSource);
-				entity.sendMessage(new LiteralText(message));
+				((PlayerEntity) entity).sendMessage(new LiteralText(message), false);
 
 			}
 			if (NodamiConfig.excludePlayers && entity instanceof PlayerEntity) {
@@ -122,7 +122,7 @@ public class NoDamI implements ModInitializer {
 			if (NodamiConfig.debugMode) {
 				String message = String.format("Entity attacked: %s",
 						EntityType.getId(target.getType()));
-				player.sendMessage(new LiteralText(message));
+				player.sendMessage(new LiteralText(message), false);
 			}
 			
 			float str = player.getAttackCooldownProgress(0);

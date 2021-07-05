@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.2.3-SNAPSHOT'
+	id 'fabric-loom' version '0.8-SNAPSHOT'
 	id 'maven-publish'
 	id 'java'
 }
@@ -19,15 +19,15 @@ configurations {
     extraLibs
 }
 dependencies {
-	minecraft "com.mojang:minecraft:1.14.4"
-	mappings "net.fabricmc:yarn:1.14.4+build.2"
-	modCompile "net.fabricmc:fabric-loader:0.4.8+build.157"
-            
-	//Fabric api
-	modCompile "net.fabricmc.fabric-api:fabric-api:0.3.0+build.200"
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+	// Fabric API. This is technically optional, but you probably want it anyway.
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	//SnakeYAML
-	compile "org.yaml:snakeyaml:1.24"
+	implementation "org.yaml:snakeyaml:1.24"
 
 	extraLibs "org.yaml:snakeyaml:1.24"
 
@@ -36,13 +36,8 @@ dependencies {
 processResources {
 	inputs.property "version", project.version
 
-	from(sourceSets.main.resources.srcDirs) {
-		include "fabric.mod.json"
+	filesMatching("fabric.mod.json") {
 		expand "version": project.version
-	}
-
-	from(sourceSets.main.resources.srcDirs) {
-		exclude "fabric.mod.json"
 	}
 }
 
